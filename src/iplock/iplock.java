@@ -12,7 +12,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
+//Hello, I'm a comment :D
 public class iplock extends JavaPlugin  {
 	public static iplock plugin;
 	public final Logger logger = Logger.getLogger("Minecraft");
