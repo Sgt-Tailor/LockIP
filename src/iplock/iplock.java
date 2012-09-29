@@ -1,5 +1,6 @@
 package iplock;
 
+import java.awt.List;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,15 +13,16 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-//Hello, I'm a comment :D
 public class iplock extends JavaPlugin  {
 	public static iplock plugin;
 	public final Logger logger = Logger.getLogger("Minecraft");
 	public final ArrayList<String> hasnotplayed = new ArrayList<String>();
-	public final ArrayList<String> isloggedin = new ArrayList<String>();
+	public final static ArrayList<String> isloggedin = new ArrayList<String>();
 	public IpLockCommandExecutor myExecutor;
 	
+	public File bypassFile;
 	public File configFile;
+	public FileConfiguration bypass;
 	public File translateFile;
 	public FileConfiguration config;
 	public FileConfiguration translate;
@@ -36,6 +38,7 @@ public class iplock extends JavaPlugin  {
 		getCommand("login").setExecutor(myExecutor);
 		getCommand("safeip").setExecutor(myExecutor);
 		getCommand("setpassword").setExecutor(myExecutor);
+		getCommand("register").setExecutor(myExecutor);
 		getCommand("lockip").setExecutor(myExecutor);
 		getCommand("reset").setExecutor(myExecutor);
 		PluginManager pm = getServer().getPluginManager();
@@ -48,6 +51,28 @@ public class iplock extends JavaPlugin  {
 		
 	}
 	private void handleFiles() {
+		bypass = new YamlConfiguration();
+		bypassFile = new File(getDataFolder(), "/bypass.yml");
+		if(!bypassFile.exists()){                     
+            bypassFile.getParentFile().mkdirs();
+            try {
+            	OutputStream out = new FileOutputStream(bypassFile);
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            List iplist = new List();
+            iplist.add("127.0.0.1");
+            bypass.set("bypasses", iplist);
+        }
+		/*
+		try {
+		config.load(bypassFile);
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
+		
 		config = new YamlConfiguration();
 		configFile = new File(getDataFolder(), "/ips.yml");
 		if(!configFile.exists()){                     
@@ -59,6 +84,7 @@ public class iplock extends JavaPlugin  {
                 e.printStackTrace();
             }
         }
+		
 		try {
 		config.load(configFile);
 		} catch (Exception e) {
@@ -74,29 +100,42 @@ public class iplock extends JavaPlugin  {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			translate.set("kickmessage", "You were kicked from the server, reason: that password is invalid");
-			translate.set("not-yet-registered", "You are not yet registered on this server. Please do so using /setpassword <password>");
-			translate.set("ask-for-login", "Please log in using /login <password>");
-			translate.set("reloadmessage", "The server has been reloaded, please log in again using /login <password>");
-			translate.set("successfull-login", "You successfully logged in"); 
-			translate.set("safeip-message", "You successfully logged in. If you log in from this location again no password will be required.");
-			translate.set("/login-message","If you regard this network as safe, please use /safeip <password> to mark this location as safe.");
-			translate.set("password-set", "Your password has been encrypted and saved! You can use /login <password> to log in");
-			translate.set("block-if-not-logged-in", "You must be loggin in to do this. Use /login <password> to do so");
-			translate.set("already-locked", "You account has already been locked");
-			translate.set("reloadmessage2", "If your ip is locked do /login without a password");
-			translate.set("successfull", "Successfull");
-			translate.set("fail", "Error, please try again");
-			translate.set("account-reset-message", "Your account has been reset, please register again");
-			saveYaml();
-			
-		}
+			}
+		addYamlElement(translate,"kickmessage", "You were kicked from the server because you entered the wrong password!");
+		addYamlElement(translate,"not-yet-registered", "You are not yet registered on this server. Please do so using /setpassword <password>");
+		addYamlElement(translate,"ask-for-login", "Please log in using /login <password>");
+		addYamlElement(translate,"reloadmessage", "The server has been reloaded, please log in again using /login <password>");
+		addYamlElement(translate,"successfull-login", "You successfully logged in"); 
+		addYamlElement(translate,"safeip-message", "You successfully logged in. If you log in from this location again no password will be required.");
+		addYamlElement(translate,"/login-message","If you regard this network as safe, please use /safeip <password> to mark this location as safe.");
+		addYamlElement(translate,"password-set", "Your password has been encrypted and saved! You can use /login <password> to log in");
+		addYamlElement(translate,"block-if-not-logged-in", "You must be loggin in to do this. Use /login <password> to do so");
+		addYamlElement(translate,"already-locked", "You account has already been locked");
+		addYamlElement(translate,"reloadmessage2", "If your ip is locked do /login without a password");
+		addYamlElement(translate,"successfull", "Successfull");
+		addYamlElement(translate,"fail", "Error, please try again");
+		addYamlElement(translate,"account-reset-message", "Your account has been reset, please register again");
+		addYamlElement(translate,"registered", "Your password was set to: ");//register message
+		addYamlElement(translate,"nopassyet", "You do not have a password yet! Please type /register <password>");//the player tried to login but doesn't have a password
+		
+		saveYaml();
 		try {
 			translate.load(translateFile);
 		} catch (Exception e) {
 		}
 		
 	}
+	public void addYamlElement(FileConfiguration YAMLConfig,String name,Object value) { //sets an Yaml element if it doesnt exist
+		if(!YAMLConfig.isSet(name)){
+			YAMLConfig.set(name, value);
+		}
+	}
+	public void removeYamlElement(FileConfiguration YAMLConfig,String name) {
+		if(!YAMLConfig.isSet(name)){
+			YAMLConfig.set(name, null);
+		}
+	}
+
 	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();

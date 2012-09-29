@@ -8,13 +8,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-
-@SuppressWarnings("deprecation")
+//@SuppressWarnings("deprecation")
+//^^^ I updated to AsyncPlayerChatEvent
 public class blockifnotloggedin implements Listener {
 	public static iplock plugin;
 	public final Logger logger = Logger.getLogger("Minecraft");
@@ -26,15 +26,15 @@ public class blockifnotloggedin implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event){
-		if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+		if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 			event.getPlayer().teleport(event.getPlayer().getLocation());
 			event.setCancelled(true);
 		}		
 	}
 	
 	@EventHandler 
-	public void OnPlayerChat(PlayerChatEvent event){
-		if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+	public void OnPlayerChat(AsyncPlayerChatEvent event){
+		if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 			event.getPlayer().sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
 			event.setCancelled(true);
 		}
@@ -42,14 +42,14 @@ public class blockifnotloggedin implements Listener {
 	@EventHandler
 	public void OnBlockBreak(BlockBreakEvent event){
 	
-		if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+		if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 			event.getPlayer().sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
 			event.setCancelled(true);
 		}
 	}
 	@EventHandler
 	public void OnBlockPlace(BlockPlaceEvent event){
-		if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+		if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 			event.getPlayer().sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
 			event.setCancelled(true);			
 		}
@@ -57,7 +57,7 @@ public class blockifnotloggedin implements Listener {
 	}
 	@EventHandler
 	public void OnPlayerDropItem(PlayerDropItemEvent event){
-		if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+		if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 			event.getPlayer().sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
 			event.setCancelled(true);			
 		}
@@ -65,14 +65,14 @@ public class blockifnotloggedin implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
 			
-		if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+		if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 			event.getPlayer().sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
 			event.setCancelled(true);			
 		}
 		
 		
 	}
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void OnPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
 		
 		String cmd = event.getMessage().replaceAll("/", "");
@@ -82,17 +82,17 @@ public class blockifnotloggedin implements Listener {
 			if(cmd.equalsIgnoreCase("setpassword")){
 				return;
 			}
-			if(!plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
+			if(cmd.equalsIgnoreCase("register")){
+				return;
+			}
+			if(!iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase())){
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
 			}
 		}
-		
-		
-			
-		
-		
-	}
+	};
+	//@EventHandler(priority = EventPriority.LOWEST) 
+	//public void OnPlayerCommandPreprocessLow(PlayerCommandPreprocessEvent event){OnPlayerCommandPreprocess(event);}
 }
 
 

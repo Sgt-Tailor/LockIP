@@ -1,8 +1,9 @@
 name: LockIP
 main: iplock.iplock
 author: Sgt_Tailor
+authors: [Sgt_Tailor,Runemoro]
 description: lock ip
-version: 0.7
+version: 0.8
 commands:
     login:
         description: writes a players Ip to the yml.
@@ -10,6 +11,9 @@ commands:
     setpassword:
         description: encrypts and saves a users password.
         usage: /setpassword <password>
+    register:
+        description: sets the password and logs you in.
+        usage: /register <password>
     safeip:
         permission: iplock.safeip
         description: regards the ip linked to the player name as safe.
@@ -17,7 +21,7 @@ commands:
     lockip:
         description: lock an ip to an username.
         usage: /lockip <password>
-        permission: lockip.lockown.
+        permission: lockip.lockown
     reset:
         permission: iplock.reset.password
         usage: /reset <Player>
@@ -25,10 +29,9 @@ permissions:
     iplock.reset.password:
         default: OP
         description: allows a user to reset someone else his password
-    
     iplock.lockown:
-        default: true
+        default: false
         description: allows a user to lock their ip.
     iplock.safeip:
-        default: false
+        default: true
         description: allows a user to do /safeip

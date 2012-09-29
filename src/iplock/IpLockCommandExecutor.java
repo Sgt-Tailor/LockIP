@@ -22,7 +22,7 @@ public class IpLockCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] arg){
-		ArrayList<String> isloggedin = plugin.isloggedin;
+		ArrayList<String> isloggedin = iplock.isloggedin;
 		if(cmd.getName().equalsIgnoreCase("reset")){// /reset player/password (player)
 			if(arg.length > 0){
 				if(arg.length == 1){
@@ -123,6 +123,27 @@ public class IpLockCommandExecutor implements CommandExecutor {
 						plugin.config.set(sender.getName().toLowerCase() + ".pass",md5(arg[0]));
 						plugin.saveYaml();
 						sender.sendMessage(ChatColor.GREEN + plugin.translate.getString("password-set"));
+						return true;
+					}
+					else if(!isloggedin.contains(sender.getName().toLowerCase())){
+						sender.sendMessage(ChatColor.RED + plugin.translate.getString("block-if-not-logged-in"));
+						return true;
+					}
+				}
+			}
+			else{
+				sender.sendMessage("This command can only be run as a player");
+			}
+		}
+		if(cmd.getName().equalsIgnoreCase("register")){//same as setpassword but logs you in
+			if(sender instanceof Player){
+				if(arg.length == 1){
+					if(isloggedin.contains(sender.getName().toLowerCase())||!(plugin.config.contains(sender.getName().toLowerCase() + ".pass"))){
+						plugin.config.set(sender.getName().toLowerCase(), "");
+						plugin.config.set(sender.getName().toLowerCase() + ".pass",md5(arg[0]));
+						plugin.saveYaml();
+						sender.sendMessage(ChatColor.GREEN + plugin.translate.getString("registered") + arg[0]);
+						isloggedin.add(sender.getName().toLowerCase());
 						return true;
 					}
 					else if(!isloggedin.contains(sender.getName().toLowerCase())){

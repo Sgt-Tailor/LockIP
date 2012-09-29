@@ -25,21 +25,21 @@ public class Joinlistener implements Listener {
 	
 	@EventHandler
 	public void OnPLayerQuit(PlayerQuitEvent event){
-		if(plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase().toLowerCase())){
-			plugin.isloggedin.remove(event.getPlayer().getName().toLowerCase().toLowerCase());
+		if(iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase().toLowerCase())){
+			iplock.isloggedin.remove(event.getPlayer().getName().toLowerCase().toLowerCase());
 		}
 	}
 	@EventHandler
 	public void OnPLayerKick(PlayerKickEvent event){
-		if(plugin.isloggedin.contains(event.getPlayer().getName().toLowerCase().toLowerCase())){
-			plugin.isloggedin.remove(event.getPlayer().getName().toLowerCase().toLowerCase());
+		if(iplock.isloggedin.contains(event.getPlayer().getName().toLowerCase().toLowerCase())){
+			iplock.isloggedin.remove(event.getPlayer().getName().toLowerCase().toLowerCase());
 		}
 	}
 	@EventHandler
 	public void OnPluginDisable(PluginDisableEvent event){
 		Bukkit.broadcastMessage(ChatColor.RED+ plugin.translate.getString("reloadmessage"));
-				Bukkit.broadcastMessage(" ");
-				Bukkit.broadcastMessage(ChatColor.DARK_RED + plugin.translate.getString("reloadmessage2"));
+		Bukkit.broadcastMessage(" ");
+		Bukkit.broadcastMessage(ChatColor.DARK_RED + plugin.translate.getString("reloadmessage2"));
 	}
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event){		
@@ -54,12 +54,12 @@ public class Joinlistener implements Listener {
 			ip = ip.replaceAll("[.]", "-");
 			if(plugin.config.contains(event.getPlayer().getName().toLowerCase().toLowerCase() + "." + ip)){
 				event.getPlayer().sendMessage(ChatColor.GREEN + plugin.translate.getString("successfull-login"));
-				plugin.isloggedin.add(event.getPlayer().getName().toLowerCase());
+				iplock.isloggedin.add(event.getPlayer().getName().toLowerCase());
 				return;
 			}
 			if(plugin.config.contains(event.getPlayer().getName().toLowerCase()+".locked")){
 				if(plugin.config.getString(event.getPlayer().getName().toLowerCase() + ".locked").equals(ip)){
-					plugin.isloggedin.add(event.getPlayer().getName().toLowerCase());
+					iplock.isloggedin.add(event.getPlayer().getName().toLowerCase());
 					event.getPlayer().sendMessage(ChatColor.GREEN + plugin.translate.getString("successfull-login"));
 					return;
 				}
